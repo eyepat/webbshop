@@ -3,16 +3,18 @@ package Model.BO;
 import UI.ItemInfo;
 import UI.CartInfo;
 import UI.CartLineInfo;
+import UI.UserInfo;
 import jakarta.servlet.http.HttpSession;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 public class ItemFacade {
 
-
+    // ===== ITEMS =====
     public static Collection<ItemInfo> getItemsWithGroup(String s){
         Collection<?> c = Item.searchItems(s);
         ArrayList<ItemInfo> items = new ArrayList<>();
@@ -39,6 +41,7 @@ public class ItemFacade {
         );
     }
 
+    // ===== CART =====
     private static Cart ensureCart(HttpSession session){
         Cart cart = (Cart) session.getAttribute("cart");
         if (cart == null) {
@@ -85,5 +88,14 @@ public class ItemFacade {
             ));
         }
         return new CartInfo(lines, cart.getTotal(), false);
+    }
+
+
+    public static Optional<UserInfo> login(String username, String password) {
+        return User.login(username, password);
+    }
+
+    public static Optional<UserInfo> signup(String username, String password) {
+        return User.signup(username, password);
     }
 }

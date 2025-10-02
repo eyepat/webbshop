@@ -5,6 +5,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Optional;
 
 import Model.BO.ItemFacade;
 
@@ -42,10 +43,16 @@ public class Controller extends HttpServlet {
                 ItemFacade.clearCart(req.getSession());
                 resp.sendRedirect(req.getContextPath()+"/app?action=viewCart");
             }
+            case "loginForm" -> {
+                req.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(req, resp);
+            }
+            case "logout" -> {
+                req.getSession().removeAttribute("authUser");
+                resp.sendRedirect(req.getContextPath()+"/app?action=listItems");
+            }
             default -> resp.sendError(404, "Unknown action: " + action);
         }
     }
-
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
@@ -54,12 +61,15 @@ public class Controller extends HttpServlet {
         String action = req.getParameter("action");
 
         if ("addToCart".equals(action)) {
+            if (req.getSession().getAttribute("authUser") == null) {
+                resp.sendRedirect(req.getContextPath()+"/app?action=loginForm");
+                return;
+            }
             ItemFacade.addToCart(
                     req.getSession(),
                     parseIntOr(req,"itemId",-1),
                     parseIntOr(req,"qty",1)
             );
-
             String ref = req.getHeader("referer");
             if (ref != null && ref.contains("action=listItems")) {
                 resp.sendRedirect(ref);
@@ -67,13 +77,38 @@ public class Controller extends HttpServlet {
                 resp.sendRedirect(req.getContextPath()+"/app?action=listItems");
             }
 
-        } else if ("updateQty".equals(action)) {
+        } else if ("updateQty".equals(action)) {   // ← VIKTIG GREN
             ItemFacade.updateQty(
                     req.getSession(),
                     parseIntOr(req,"itemId",-1),
-                    parseIntOr(req,"qty",1)
+                    parseIntOr(req,"qty",0)
             );
             resp.sendRedirect(req.getContextPath()+"/app?action=viewCart");
+
+        } else if ("login".equals(action)) {
+            String u = req.getParameter("username");
+            String p = req.getParameter("password");
+            Optional<UserInfo> user = ItemFacade.login(u, p);
+            if (user.isPresent()) {
+                // (valfritt) rotera session-id här för säkerhet
+                req.getSession().setAttribute("authUser", user.get());
+                resp.sendRedirect(req.getContextPath()+"/app?action=listItems");
+            } else {
+                req.setAttribute("error", "Fel användarnamn eller lösenord.");
+                req.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(req, resp);
+            }
+
+        } else if ("signup".equals(action)) {
+            String u = req.getParameter("username");
+            String p = req.getParameter("password");
+            Optional<UserInfo> user = ItemFacade.signup(u, p);
+            if (user.isPresent()) {
+                req.getSession().setAttribute("authUser", user.get());
+                resp.sendRedirect(req.getContextPath()+"/app?action=listItems");
+            } else {
+                req.setAttribute("error", "Kunde inte skapa konto. Försök igen.");
+                req.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(req, resp);
+            }
 
         } else {
             resp.sendError(400, "Unsupported POST action");
