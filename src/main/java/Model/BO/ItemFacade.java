@@ -1,7 +1,7 @@
 package Model.BO;
 
-import UI.ItemInfo;
 import UI.CartInfo;
+import UI.ItemInfo;
 import UI.CartLineInfo;
 import UI.UserInfo;
 import jakarta.servlet.http.HttpSession;

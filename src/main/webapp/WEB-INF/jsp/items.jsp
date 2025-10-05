@@ -1,11 +1,13 @@
-<%@ page contentType="text/html; charset=UTF-8" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c"  uri="jakarta.tags.core" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 
 <html>
 <head>
+    <meta charset="UTF-8"/>
     <title>Produkter</title>
     <style>
-        body { font-family: system-ui, Arial, sans-serif; margin: 0; }
+        body { font-family: system-ui, Arial, sans-serif; margin:0; }
         .topbar { display:flex; justify-content:space-between; align-items:center;
             padding:12px 18px; border-bottom:1px solid #e5e5e5; position:sticky; top:0; background:#fff; }
         .cart-link { position:relative; display:inline-block; font-size:22px; text-decoration:none; }

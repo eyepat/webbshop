@@ -1,8 +1,10 @@
-<%@ page contentType="text/html; charset=UTF-8" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 
 <html>
 <head>
+    <meta charset="UTF-8"/>
     <title>Korg</title>
     <style>
         body { font-family: system-ui, Arial, sans-serif; margin: 0; }
@@ -37,7 +39,7 @@
 <div class="wrap">
     <c:set var="cart" value="${requestScope.cart}" />
     <c:choose>
-        <c:when test="${empty cart.lines}">
+        <c:when test="${empty cart or empty cart.lines}">
             <p style="text-align:center;">Korgen är tom.</p>
             <p style="text-align:center;">
                 <a href="<c:url value='/app?action=listItems'/>" class="btn">Handla</a>
