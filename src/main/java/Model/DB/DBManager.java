@@ -5,28 +5,48 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DBManager {
-    private static DBManager instance = null;
+    private static volatile DBManager instance = null;
     private Connection con = null;
 
     private DBManager() { connect(); }
 
+    // Läs env-var eller system property, annars default
+    private static String env(String key, String def) {
+        String v = System.getenv(key);
+        if (v == null || v.isBlank()) v = System.getProperty(key);
+        return (v == null || v.isBlank()) ? def : v;
+    }
+
     private void connect() {
         try {
+            // === NYTT: allt hämtas från miljövariabler med bra defaultar ===
+            String host = env("DB_HOST", "127.0.0.1");
+            String port = env("DB_PORT", "3306");
+            String db   = env("DB_NAME", "webshop");
+            String user = env("DB_USER", "webshop");
+            String pass = env("DB_PASS", "StrongPass123!");
+
+            String url  = "jdbc:mysql://" + host + ":" + port + "/" + db
+                    + "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
+                    + "&useUnicode=true&characterEncoding=UTF-8"
+                    + "&connectTimeout=3000&socketTimeout=5000";
+
             Class.forName("com.mysql.cj.jdbc.Driver");
-            con = DriverManager.getConnection(
-                    "jdbc:mysql://192.168.0.4:3306/webshop" +
-                            "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC",
-                    "webshop",
-                    "StrongPass123!"
-            );
+            con = DriverManager.getConnection(url, user, pass);
         } catch (Exception e) {
             throw new RuntimeException("Kunde inte ansluta till databasen", e);
         }
     }
 
     private static DBManager getInstance() {
-        if (instance == null) instance = new DBManager();
-        return instance;
+        DBManager i = instance;
+        if (i == null) {
+            synchronized (DBManager.class) {
+                i = instance;
+                if (i == null) instance = i = new DBManager();
+            }
+        }
+        return i;
     }
 
     public static Connection getConnection() {
