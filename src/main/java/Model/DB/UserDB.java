@@ -24,7 +24,7 @@ public class UserDB extends User {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null; // ej hittad
+        return null;
     }
 
     // INSERT
@@ -50,7 +50,7 @@ public class UserDB extends User {
         return null;
     }
 
-    // private ctor så endast denna klass kan skapa BO-instanser från DB-rader
+
     private UserDB(int id, String username, String passwordHash) {
         super(id, username, passwordHash);
     }

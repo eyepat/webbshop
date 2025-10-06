@@ -33,7 +33,7 @@ public class Controller extends HttpServlet {
         resp.sendRedirect(req.getContextPath() + path);
     }
 
-    // ---- GET ---------------------------------------------------------------
+
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -74,7 +74,7 @@ public class Controller extends HttpServlet {
         }
     }
 
-    // ---- POST --------------------------------------------------------------
+
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
@@ -98,7 +98,7 @@ public class Controller extends HttpServlet {
                     parseIntOr(req,"qty",1)
             );
 
-            // Försök gå tillbaka till produktlistan om referer pekar dit
+
             String ref = req.getHeader("referer");
             if (ref != null && ref.contains(req.getContextPath() + "/app?action=listItems")) {
                 resp.sendRedirect(ref);
@@ -120,7 +120,7 @@ public class Controller extends HttpServlet {
 
             Optional<UserInfo> user = ItemFacade.login(u, p);
             if (user.isPresent()) {
-                // säkerhet: rotera session-id
+
                 req.changeSessionId();
                 req.getSession().setAttribute("authUser", user.get());
                 redirect(req, resp,"/app?action=listItems");

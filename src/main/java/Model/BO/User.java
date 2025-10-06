@@ -10,9 +10,9 @@ import java.util.Optional;
 public class User {
     private final int id;
     private final String username;
-    private final String passwordHash; // format: sha256:<saltB64>:<hashB64>
+    private final String passwordHash;
 
-    // protected så att Model.DB.UserDB (subklass) kan kalla super(...)
+
     protected User(int id, String username, String passwordHash) {
         this.id = id;
         this.username = username;
@@ -22,7 +22,7 @@ public class User {
     public int getId() { return id; }
     public String getUsername() { return username; }
 
-    // ===== API som Facade använder =====
+
 
     public static Optional<UserInfo> login(String username, String password) {
         if (!validInput(username, password)) return Optional.empty();
@@ -37,13 +37,13 @@ public class User {
         String u = username.trim();
         if (Model.DB.UserDB.loadByUsername(u) != null) return Optional.empty(); // upptaget
 
-        String stored = hashPassword(password); // sha256:<saltB64>:<hashB64>
+        String stored = hashPassword(password);
         User created = Model.DB.UserDB.create(u, stored);
         if (created == null) return Optional.empty();
         return Optional.of(new UserInfo(created.id, created.username));
     }
 
-    // ===== Lösenord (SHA-256 + salt) =====
+
 
     private static String hashPassword(String password) {
         try {

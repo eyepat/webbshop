@@ -42,11 +42,11 @@ public class ItemDB extends Model.BO.Item {
                 }
             }
         } catch (SQLException e){ e.printStackTrace(); }
-        return null; // hanteras i Facade
+        return null;
     }
 
     private ItemDB(int id, String name, String desc,float price){
         super(id, name, desc,price);
     }
 }
-//webshop StrongPass123!
+

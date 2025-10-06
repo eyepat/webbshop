@@ -10,7 +10,7 @@ public class DBManager {
 
     private DBManager() { connect(); }
 
-    // Läs env-var eller system property, annars default
+
     private static String env(String key, String def) {
         String v = System.getenv(key);
         if (v == null || v.isBlank()) v = System.getProperty(key);
