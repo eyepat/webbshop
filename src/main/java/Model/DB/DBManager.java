@@ -19,16 +19,17 @@ public class DBManager {
 
     private void connect() {
         try {
-            // === NYTT: allt hämtas från miljövariabler med bra defaultar ===
+
             String host = env("DB_HOST", "127.0.0.1");
             String port = env("DB_PORT", "3306");
             String db   = env("DB_NAME", "webshop");
             String user = env("DB_USER", "webshop");
             String pass = env("DB_PASS", "StrongPass123!");
 
-            String url  = "jdbc:mysql://" + host + ":" + port + "/" + db
+            String url = "jdbc:mysql://" + host + ":" + port + "/" + db
                     + "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
-                    + "&useUnicode=true&characterEncoding=UTF-8"
+                    + "&useUnicode=true&characterEncoding=utf8"
+                    + "&connectionCollation=utf8mb4_0900_ai_ci"
                     + "&connectTimeout=3000&socketTimeout=5000";
 
             Class.forName("com.mysql.cj.jdbc.Driver");
