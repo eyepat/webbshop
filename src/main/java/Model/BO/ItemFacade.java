@@ -15,7 +15,7 @@ import java.util.Optional;
 public class ItemFacade {
 
     // ===== ITEMS =====
-    public static Collection<ItemInfo> getItemsWithGroup(String s){
+    public static Collection<ItemInfo> getItemsWithGroup(String s) {
         Collection<?> c = Item.searchItems(s);
         ArrayList<ItemInfo> items = new ArrayList<>();
         for (Iterator<?> it = c.iterator(); it.hasNext();) {
@@ -30,7 +30,7 @@ public class ItemFacade {
         return items;
     }
 
-    public static ItemInfo getItemById(int id){
+    public static ItemInfo getItemById(int id) {
         Item item = Item.getById(id);
         if (item == null) throw new IllegalArgumentException("Item not found: " + id);
         return new ItemInfo(
@@ -42,7 +42,7 @@ public class ItemFacade {
     }
 
     // ===== CART =====
-    private static Cart ensureCart(HttpSession session){
+    private static Cart ensureCart(HttpSession session) {
         Cart cart = (Cart) session.getAttribute("cart");
         if (cart == null) {
             cart = new Cart();
@@ -72,7 +72,7 @@ public class ItemFacade {
         ensureCart(session).clear();
     }
 
-    public static CartInfo getCartView(HttpSession session){
+    public static CartInfo getCartView(HttpSession session) {
         Cart cart = (Cart) session.getAttribute("cart");
         if (cart == null || cart.isEmpty()) {
             return new CartInfo(List.of(), 0f, true);
@@ -90,12 +90,14 @@ public class ItemFacade {
         return new CartInfo(lines, cart.getTotal(), false);
     }
 
-
+    // ===== USER =====
     public static Optional<UserInfo> login(String username, String password) {
-        return User.login(username, password);
+        return User.login(username, password)
+                .map(u -> new UserInfo(u.getId(), u.getUsername()));
     }
 
     public static Optional<UserInfo> signup(String username, String password) {
-        return User.signup(username, password);
+        return User.signup(username, password)
+                .map(u -> new UserInfo(u.getId(), u.getUsername()));
     }
 }

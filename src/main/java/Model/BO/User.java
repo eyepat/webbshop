@@ -1,7 +1,5 @@
 package Model.BO;
 
-import UI.UserInfo;
-
 import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.util.Base64;
@@ -11,7 +9,6 @@ public class User {
     private final int id;
     private final String username;
     private final String passwordHash;
-
 
     protected User(int id, String username, String passwordHash) {
         this.id = id;
@@ -23,26 +20,24 @@ public class User {
     public String getUsername() { return username; }
 
 
-
-    public static Optional<UserInfo> login(String username, String password) {
+    public static Optional<User> login(String username, String password) {
         if (!validInput(username, password)) return Optional.empty();
         User u = Model.DB.UserDB.loadByUsername(username.trim());
         if (u == null) return Optional.empty();
         if (!verifyPassword(password, u.passwordHash)) return Optional.empty();
-        return Optional.of(new UserInfo(u.id, u.username));
+        return Optional.of(u);
     }
 
-    public static Optional<UserInfo> signup(String username, String password) {
+    public static Optional<User> signup(String username, String password) {
         if (!validInput(username, password)) return Optional.empty();
         String u = username.trim();
-        if (Model.DB.UserDB.loadByUsername(u) != null) return Optional.empty(); // upptaget
+        if (Model.DB.UserDB.loadByUsername(u) != null) return Optional.empty();
 
         String stored = hashPassword(password);
         User created = Model.DB.UserDB.create(u, stored);
         if (created == null) return Optional.empty();
-        return Optional.of(new UserInfo(created.id, created.username));
+        return Optional.of(created);
     }
-
 
 
     private static String hashPassword(String password) {
